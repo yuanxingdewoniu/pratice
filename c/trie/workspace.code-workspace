@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../x86-kernel"
+		},
+		{
+			"path": "../../../../../../media/wxl/baacdb3f-53f8-4414-84b8-d4c6aa6ae78d/filearmor_kernel_module/x86-kernel"
+		},
+		{
+			"path": "../../../../../../media/wxl/baacdb3f-53f8-4414-84b8-d4c6aa6ae78d/filearmor"
+		},
+		{
+			"path": "../../../dlp-module"
+		},
+		{
+			"path": "../../../filearmor"
+		}
+	],
+	"settings": {}
+}
