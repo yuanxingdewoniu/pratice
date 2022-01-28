@@ -1,0 +1,16 @@
+{
+  "Service": "",
+  "Objects": [
+    {
+      "Type": "UdcpCache",
+      "Path": "",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.udcp.iam",
+          "CustomInterfaceName": true,
+          "Type": "udcpCache"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+summary: execute smoke tests in a nested Ubuntu Core VM that meets the minimal requirements
+
+systems: [ubuntu-16.04-64, ubuntu-18.04-64, ubuntu-20.04-64]
+
+environment:
+    NESTED_ENABLE_SECURE_BOOT/secboot_disabled: false
+    NESTED_ENABLE_TPM/secboot_disabled: false
+    NESTED_ENABLE_SECURE_BOOT/secboot_enabled: true
+    NESTED_ENABLE_TPM/secboot_enabled: true
+
+prepare: |
+    tests.nested build-image core
+
+execute: |
+    SPREAD="$(tests.nested download spread)"
+
+    # see https://docs.ubuntu.com/core/en/#advantages-for-iot for minimum
+    # requirements
+    MINIMAL_MEM=256
+
+    if tests.nested is-nested uc20; then
+        # TODO:UC20: this should written down in the official docs
+        if tests.nested is-enabled secboot; then
+            MINIMAL_MEM=512
+        else
+            # TODO: this used to be 384, investigate why this has increased
+            MINIMAL_MEM=512
+        fi
+        NESTED_SPREAD_SYSTEM=ubuntu-core-20-64
+    elif tests.nested is-nested uc18; then
+        NESTED_SPREAD_SYSTEM=ubuntu-core-18-64
+    elif tests.nested is-nested uc16; then
+        NESTED_SPREAD_SYSTEM=ubuntu-core-16-64
+    else
+        echo "unsupported nested system"
+        exit 1
+    fi
+
+    tests.nested create-vm core --param-mem "-m $MINIMAL_MEM"
+
+    echo "Run spread smoke tests using mem: $MINIMAL_MEM"
+    set +x
+    export SPREAD_EXTERNAL_ADDRESS=localhost:8022
+    "$SPREAD" -v "external:$NESTED_SPREAD_SYSTEM:tests/smoke/..."

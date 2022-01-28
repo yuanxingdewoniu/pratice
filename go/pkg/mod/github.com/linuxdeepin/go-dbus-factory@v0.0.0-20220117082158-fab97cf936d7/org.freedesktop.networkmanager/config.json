@@ -1,0 +1,370 @@
+{
+  "Service": "org.freedesktop.NetworkManager",
+  "Objects": [
+    {
+      "Type": "ObjectManager",
+      "XMLFile": "-",
+      "Path": "/org/freedesktop",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.DBus.ObjectManager"
+        }
+      ]
+    },
+    {
+      "Type": "AccessPoint",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.AccessPoint",
+          "Type": "accessPoint",
+          "Accessor": "AccessPoint"
+        }
+      ]
+    },
+    {
+      "Type": "AgentManager",
+      "Path": "/org/freedesktop/NetworkManager/AgentManager",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.AgentManager",
+          "Type": "agentManager"
+        }
+      ]
+    },
+    {
+      "Type": "Checkpoint",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.Checkpoint",
+          "Type": "checkpoint"
+        }
+      ]
+    },
+    {
+      "Type": "ActiveConnection",
+      "XMLFile": "Connection.Active",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.Connection.Active",
+          "Type": "activeConnection"
+        }
+      ]
+    },
+    {
+      "Type": "Dhcp4Config",
+      "XMLFile": "DHCP4Config",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.DHCP4Config",
+          "Type": "dhcp4Config",
+          "Fixes": {
+            "p/Options": {
+              "RefType": "PropMapStringVariant"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Type": "Dhcp6Config",
+      "XMLFile": "DHCP6Config",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.DHCP6Config",
+          "Type": "dhcp6Config",
+          "Fixes": {
+            "p/Options": {
+              "RefType": "PropMapStringVariant"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Type": "DnsManager",
+      "Path": "/org/freedesktop/NetworkManager/DnsManager",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.DnsManager",
+          "Type": "dnsManager",
+          "Fixes": {
+            "p/Configuration": {
+              "RefType": "PropMapSVSlice"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Type": "IP4Config",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.IP4Config",
+          "Type": "ip4Config",
+          "Fixes": {
+            "p/Addresses": {
+              "RefType": "PropUint32SliceSlice"
+            },
+            "p/Routes": {
+              "RefType": "PropUint32SliceSlice"
+            },
+            "p/AddressData": {
+              "RefType": "PropMapSVSlice"
+            },
+            "p/RouteData": {
+              "RefType": "PropMapSVSlice"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Type": "IP6Config",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.IP6Config",
+          "Type": "ip6Config",
+          "Fixes": {
+            "p/AddressData": {
+              "RefType": "PropMapSVSlice"
+            },
+            "p/RouteData": {
+              "RefType": "PropMapSVSlice"
+            },
+            "p/Addresses": {
+              "Type": "PropIP6ConfigAddresses",
+              "ValueType": "[]IP6Address"
+            },
+            "p/Routes": {
+              "Type": "PropIP6ConfigRoutes",
+              "ValueType": "[]IP6Route"
+            },
+            "p/Nameservers": {
+              "Type": "PropIP6NameServers",
+              "ValueType": "[][]byte"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Type":  "Manager",
+      "XMLFile": "NetworkManager",
+      "Path": "/org/freedesktop/NetworkManager",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager",
+          "Type": "manager",
+          "Fixes": {
+            "p/GlobalDnsConfiguration": {
+              "RefType": "PropMapStringVariant"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Type": "PPP",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.PPP",
+          "Type": "ppp"
+        }
+      ]
+    },
+    {
+      "Type": "SecretAgent",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.SecretAgent",
+          "Type": "secretAgent"
+        }
+      ]
+    },
+    {
+      "Type": "ConnectionSettings",
+      "XMLFile": "Settings.Connection",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.Settings.Connection",
+          "Type": "connectionSettings"
+        }
+      ]
+    },
+    {
+      "Type": "Settings",
+      "Path": "/org/freedesktop/NetworkManager/Settings",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.Settings",
+          "Type": "settings"
+        }
+      ]
+    },
+    {
+      "Type": "VpnConnection",
+      "XMLFile": "VPN.Connection",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.VPN.Connection",
+          "Type": "vpnConnection"
+        }
+      ]
+    },
+    {
+      "Type": "VpnPlugin",
+      "XMLFile": "VPN.Plugin",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.VPN.Plugin",
+          "Type": "vpnPlugin"
+        }
+      ]
+    },
+    {
+      "Type": "Device",
+      "XmlFiles": ["Device*"],
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.Device",
+          "Accessor": "Device",
+          "Type": "device",
+          "Fixes": {
+            "p/StateReason": {
+              "Type": "PropDeviceStateReason",
+              "ValueType": "DeviceStateReason",
+              "EmptyValue": "$T{}"
+            },
+            "p/LldpNeighbors": {
+              "RefType": "PropMapSVSlice"
+            }
+          }
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Adsl",
+          "Accessor": "Adsl",
+          "Type": "deviceAdsl"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Bluetooth",
+          "Accessor": "Bluetooth",
+          "Type": "deviceBluetooth"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Bond",
+          "Accessor": "Bond",
+          "Type": "deviceBond"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Bridge",
+          "Accessor": "Bridge",
+          "Type": "deviceBridge"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Generic",
+          "Accessor": "Generic",
+          "Type": "deviceGeneric"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Infiniband",
+          "Accessor": "Infiniband",
+          "Type": "deviceInfiniband"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.IPTunnel",
+          "Accessor": "IPTunnel",
+          "Type": "deviceIPTunnel"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Macsec",
+          "Accessor": "Macsec",
+          "Type": "deviceMacsec"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Macvlan",
+          "Accessor": "Macvlan",
+          "Type": "deviceMacvlan"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Modem",
+          "Accessor": "Modem",
+          "Type": "deviceModem"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.OlpcMesh",
+          "Accessor": "OlpcMesh",
+          "Type": "deviceOlpcMesh"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Statistics",
+          "Accessor": "Statistics",
+          "Type": "deviceStatistics"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Team",
+          "Accessor": "Team",
+          "Type": "deviceTeam"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Tun",
+          "Accessor": "Tun",
+          "Type": "deviceTun"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Veth",
+          "Accessor": "Veth",
+          "Type": "deviceVeth"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Vlan",
+          "Accessor": "Vlan",
+          "Type": "deviceVlan"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Vxlan",
+          "Accessor": "Vxlan",
+          "Type": "deviceVxlan"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.WiMax",
+          "Accessor": "WiMax",
+          "Type": "deviceWiMax"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Wired",
+          "Accessor": "Wired",
+          "Type": "deviceWired"
+        },
+        {
+          "Name": "org.freedesktop.NetworkManager.Device.Wireless",
+          "Accessor": "Wireless",
+          "Type": "deviceWireless"
+        }
+      ]
+    },
+    {
+      "Type": "WiMaxNsp",
+      "XmlFile": "WiMax.Nsp",
+      "Interfaces": [
+        {
+          "Name": "org.freedesktop.NetworkManager.WiMax.Nsp",
+          "Type": "wiMaxNsp"
+        }
+      ]
+    }
+  ],
+  "PropertyTypes": [
+    {
+      "Type": "PropMapStringVariant",
+      "ValueType": "map[string]dbus.Variant"
+    },
+    {
+      "Type": "PropMapSVSlice",
+      "ValueType": "[]map[string]dbus.Variant"
+    },
+    {
+      "Type": "PropUint32SliceSlice",
+      "ValueType": "[][]uint32"
+    }
+  ]
+}

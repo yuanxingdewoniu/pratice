@@ -1,0 +1,25 @@
+{
+  "Service": "com.deepin.daemon.helper.Backlight",
+  "Objects": [
+    {
+      "Type": "Backlight",
+      "Path": "/com/deepin/daemon/helper/Backlight",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.daemon.helper.Backlight",
+          "Type": "backlight"
+        }
+      ]
+    },
+    {
+      "Type": "DDCCI",
+      "Path": "/com/deepin/daemon/helper/Backlight/DDCCI",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.daemon.helper.Backlight.DDCCI",
+          "Type": "ddcci"
+        }
+      ]
+    }
+  ]
+}

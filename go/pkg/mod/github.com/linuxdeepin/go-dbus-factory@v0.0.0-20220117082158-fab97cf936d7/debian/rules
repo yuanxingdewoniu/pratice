@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+
+export GOCACHE := /tmp/gocache
+
+ifeq ($(DEB_BUILD_ARCH),sw_64)
+%:
+	dh $@
+else
+%:
+	dh $@ --buildsystem=golang --with=golang
+endif
+
+
+
+override_dh_auto_clean:
+	dh_auto_clean --
+	rm -fr obj-x86_64-linux-gnu

@@ -1,0 +1,34 @@
+{
+  "Service": "org.kde.KWin",
+  "Objects": [
+    {
+      "Type": "Compositor",
+      "Path": "/Compositor",
+      "Interfaces": [
+        {
+          "Name": "org.kde.kwin.Compositing",
+          "Type": "compositing"
+        }
+      ]
+    },
+    {
+      "Type": "InputDeviceManager",
+      "Path": "/org/kde/KWin/InputDevice",
+      "Interfaces": [
+        {
+          "Name": "org.kde.KWin.InputDeviceManager",
+          "Type": "inputDeviceManager"
+        }
+      ]
+    },
+    {
+      "Type": "InputDevice",
+      "Interfaces": [
+        {
+          "Name": "org.kde.KWin.InputDevice",
+          "Type": "inputDevice"
+        }
+      ]
+    }
+  ]
+}

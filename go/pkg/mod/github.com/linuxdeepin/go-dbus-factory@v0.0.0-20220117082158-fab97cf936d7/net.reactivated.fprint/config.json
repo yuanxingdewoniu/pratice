@@ -1,0 +1,35 @@
+{
+  "Service": "net.reactivated.Fprint",
+  "Objects": [
+    {
+      "Type": "Manager",
+      "Path": "/net/reactivated/Fprint/Manager",
+      "Interfaces": [
+        {
+          "Name": "net.reactivated.Fprint.Manager",
+          "Type": "manager"
+        }
+      ]
+    },
+    {
+      "Type": "Device",
+      "Interfaces": [
+        {
+          "Name": "net.reactivated.Fprint.Device",
+          "Type": "device",
+          "Fixes": {
+            "p/scan-type": {
+              "RenameTo": "ScanType"
+            },
+            "p/num-enroll-stages": {
+              "RenameTo": "NumEnrollStages"
+            },
+            "p/name": {
+              "RenameTo": "Name"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

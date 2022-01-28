@@ -1,0 +1,60 @@
+{
+  "Service": "com.deepin.daemon.Authenticate",
+  "Objects": [
+    {
+      "Type": "Authenticate",
+      "Path": "/com/deepin/daemon/Authenticate",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.daemon.Authenticate",
+          "Type": "authenticate",
+          "Accessor": "Authenticate"
+        }
+      ]
+    },
+    {
+      "Type": "Fingerprint",
+      "Path": "/com/deepin/daemon/Authenticate/Fingerprint",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.daemon.Authenticate.Fingerprint",
+          "Type": "fingerprint",
+          "Accessor": "Fingerprint"
+        }
+      ]
+    },
+    {
+      "Type": "UKey",
+      "Path": "/com/deepin/daemon/Authenticate/UKey",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.daemon.Authenticate.UKey",
+          "Type": "ukey",
+          "Accessor": "UKey"
+        }
+      ]
+    },
+    {
+      "Type": "Face",
+      "Path": "/com/deepin/daemon/Authenticate/Face",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.daemon.Authenticate.Face",
+          "Type": "face",
+          "Accessor": "Face"
+        }
+      ]
+    },
+    {
+      "Type": "CharaManger",
+      "Path": "/com/deepin/daemon/Authenticate/CharaManger",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.daemon.Authenticate.CharaManger",
+          "Type": "charaManger",
+          "Accessor": "CharaManger"
+        }
+      ]
+    }
+  ]
+}

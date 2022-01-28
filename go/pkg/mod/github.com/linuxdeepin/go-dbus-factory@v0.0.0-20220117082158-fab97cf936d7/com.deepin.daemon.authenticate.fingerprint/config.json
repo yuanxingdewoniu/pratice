@@ -1,0 +1,29 @@
+{
+  "Service": "",
+  "Objects": [
+    {
+      "Type": "Device",
+      "Path": "",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.daemon.Authenticate.Fingerprint.Device",
+          "CustomInterfaceName": true,
+          "Type": "device",
+          "Accessor": "Device"
+        }
+      ]
+    },
+    {
+      "Type": "CommonDevice",
+      "Path": "",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.daemon.Authenticate.Fingerprint.CommonDevice",
+          "CustomInterfaceName": true,
+          "Type": "commonDevice",
+          "Accessor": "CommonDevice"
+        }
+      ]
+    }
+  ]
+}

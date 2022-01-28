@@ -1,0 +1,45 @@
+{
+  "Service": "com.deepin.SessionManager",
+  "Objects": [
+    {
+      "Type": "StartManager",
+      "Path": "/com/deepin/StartManager",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.StartManager",
+          "Type": "startManager"
+        }
+      ]
+    },
+    {
+      "Type": "SessionManager",
+      "Path": "/com/deepin/SessionManager",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.SessionManager",
+          "Type": "sessionManager"
+        }
+      ]
+    },
+    {
+      "Type": "WMSwitcher",
+      "Path": "/com/deepin/WMSwitcher",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.WMSwitcher",
+          "Type": "wmSwitcher"
+        }
+      ]
+    },
+    {
+      "Type": "XSettings",
+      "Path": "/com/deepin/XSettings",
+      "Interfaces": [
+        {
+          "Name": "com.deepin.XSettings",
+          "Type": "xSettings"
+        }
+      ]
+    }
+  ]
+}

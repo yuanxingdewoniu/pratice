@@ -1,0 +1,14 @@
+_generated/generated.go
+_generated/generated_test.go
+_generated/*_gen.go
+_generated/*_gen_test.go
+msgp/defgen_test.go
+msgp/nestedgen_test.go
+msgp/cover.out
+*~
+truepack
+testdata/my.z
+testdata/my.z.json
+testdata/my_gen.go
+testdata/my_gen_test.go
+gitcommit.go
