@@ -2,9 +2,9 @@
 package main
 
 import (
-	"net/http"
 	"io"
 	"log"
+	"net/http"
 )
 
 const form = `<html><body><form action="#" method="post" name="bar">

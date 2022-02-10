@@ -29,7 +29,7 @@ func main() {
 		} else if len(inputString) < 5 {
 			outputString = string([]byte(inputString)[2:len(inputString)]) + "\r\n"
 		} else {
-        		outputString = string([]byte(inputString)[2:5]) + "\r\n"
+			outputString = string([]byte(inputString)[2:5]) + "\r\n"
 		}
 		//fmt.Printf("The output was: --%s--", outputString)
 		_, err := outputWriter.WriteString(outputString)

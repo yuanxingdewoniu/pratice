@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-func main()  {
+func main() {
 
 	// *int 的空指针
 	var a *int
@@ -16,6 +16,5 @@ func main()  {
 
 	// * int 类型的空指针
 	fmt.Println("()")
-
 
 }

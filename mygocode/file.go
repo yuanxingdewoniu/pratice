@@ -11,7 +11,6 @@ type fileWriter struct {
 	file *os.File
 }
 
-
 // 设置文件写入器写入的文件名
 func (f *fileWriter) SetFile(filename string) (err error) {
 	// 如果文件已经打开,关闭前一个文件
@@ -23,20 +22,19 @@ func (f *fileWriter) SetFile(filename string) (err error) {
 	f.file, err = os.Create(filename)
 
 	//如果创建的过程出现错误，则返回错误
-	return  err
+	return err
 }
-
 
 // 实现LogWriter的Write（）方法
 func (f *fileWriter) Write(data interface{}) error {
 
-	if  f.file ==nil {
+	if f.file == nil {
 		// 日志文件创建没有成功
 		return errors.New("file not created")
 	}
 
 	// 将数据序列化为字符串
-	str := fmt.Sprintf("%v \n",data)
+	str := fmt.Sprintf("%v \n", data)
 
 	//将数据以字节数组写入文件中
 	_, err := f.file.Write([]byte(str))
@@ -44,11 +42,11 @@ func (f *fileWriter) Write(data interface{}) error {
 }
 
 // 创建文件写入器实例
-func newFileWriter()  *fileWriter {
+func newFileWriter() *fileWriter {
 	return &fileWriter{}
 }
 
-func main()  {
+func main() {
 	f := new(fileWriter)
 
 	f.Write("Write file ")

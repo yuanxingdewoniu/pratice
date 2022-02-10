@@ -2,6 +2,6 @@ package main
 
 import "fmt"
 
-func pkgFunc()  {
+func pkgFunc() {
 	fmt.Println("call pkgFunc")
 }

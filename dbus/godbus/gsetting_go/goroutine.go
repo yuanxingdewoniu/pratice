@@ -7,20 +7,20 @@ import (
 	"time"
 )
 
-func f(from string)  {
+func f(from string) {
 	for i := 0; i < 3; i++ {
-		fmt.Println(from, ":",i)
+		fmt.Println(from, ":", i)
 	}
 }
 
 func say(s string) {
-	for i :=0; i < 3; i++  {
+	for i := 0; i < 3; i++ {
 		time.Sleep(100 * time.Millisecond)
 		fmt.Println(s)
 	}
 }
 
-func main(){
+func main() {
 	f("direct")
 	go f("goroutine")
 
@@ -44,7 +44,7 @@ func main(){
 	go func() {
 		defer wg.Done()
 
-		for count :=0; count < 15;  count++ {
+		for count := 0; count < 15; count++ {
 			for char := 'a'; char < 'a'+26; char++ {
 				//fmt.Println(char)
 				fmt.Printf("%c", char)
@@ -56,14 +56,13 @@ func main(){
 
 	go func() {
 		defer wg.Done()
-		for count := 0; count  < 15; count ++ {
-			for char := 'A'; char < 'A' + 26; char ++ {
+		for count := 0; count < 15; count++ {
+			for char := 'A'; char < 'A'+26; char++ {
 				fmt.Printf("%c", char)
 			}
 			fmt.Println()
 		}
 	}()
-
 
 	fmt.Println("Waiting to Finish")
 	wg.Wait()

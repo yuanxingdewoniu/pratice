@@ -29,4 +29,5 @@ func even(n int) bool {
 	}
 	return false
 }
+
 /* [0 2 4 6 8] */

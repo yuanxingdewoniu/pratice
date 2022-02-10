@@ -5,12 +5,12 @@
 package main
 
 import (
-	"net/http"
+	"./rpc_objects"
 	"log"
 	"net"
+	"net/http"
 	"net/rpc"
 	"time"
-	"./rpc_objects"
 )
 
 func main() {
@@ -24,6 +24,7 @@ func main() {
 	go http.Serve(listener, nil)
 	time.Sleep(1000e9)
 }
+
 /* Output:
 Starting Process E:/Go/GoBoek/code_examples/chapter_14/rpc_server.exe ...
 

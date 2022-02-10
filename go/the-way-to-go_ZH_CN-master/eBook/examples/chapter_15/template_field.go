@@ -8,7 +8,7 @@ import (
 )
 
 type Person struct {
-	Name string
+	Name                string
 	nonExportedAgeField string
 }
 

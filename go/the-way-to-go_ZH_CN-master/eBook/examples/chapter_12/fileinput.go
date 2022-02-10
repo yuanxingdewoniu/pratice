@@ -29,6 +29,6 @@ func main() {
 		fmt.Printf("The input was: %s", inputString)
 		if readerError == io.EOF {
 			return // error or EOF
-		}	
+		}
 	}
 }

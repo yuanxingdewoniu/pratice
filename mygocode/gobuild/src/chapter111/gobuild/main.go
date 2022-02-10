@@ -1,8 +1,8 @@
-package  main
+package main
 
 import "fmt"
 
-func main()  {
+func main() {
 	pkgFunc()
 
 	fmt.Printf("hello world")

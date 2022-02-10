@@ -2,7 +2,7 @@ package main
 
 import "github.com/chrislusf/gleam/gio"
 
-func  main()  {
+func main() {
 	gs := gio.NewSettings("ca.desrt.dconf-editor.Demo")
 	str := gs.GetString("string")
 

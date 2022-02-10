@@ -3,9 +3,9 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"io/ioutil"
 	"log"
+	"net/http"
 )
 
 func main() {

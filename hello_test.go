@@ -4,7 +4,6 @@ import (
 	"testing"
 )
 
-
-func TestHelloWorlorld(t *testing.T){
+func TestHelloWorlorld(t *testing.T) {
 	t.Log("hello world")
 }

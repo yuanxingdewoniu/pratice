@@ -2,27 +2,30 @@ package main
 
 import (
 	"fmt"
-	"runtime"
 	"time"
 )
 
-func running(){
-	var times int
-	// 构建一个无限循环
-	for {
-		times++
-		fmt.Println("tick",times)
+func goroutine1(t int) {
 
-		//延时1秒
-		time.Sleep(time.Second)
+	for t > 0 {
+		t--
+		fmt.Println("Hello goroutine ", t)
 	}
+
 }
 
-func main()  {
-	// 并发执行程序
-	go running()
-	runtime.GOMAXPROCS(10https://pan.baidu.com/s/1Go1Vm-HaAlv5ZTe5zKcW2w)
-	//接受命令行的输入,不做任何事情
-	var input string
-	fmt.Scanln(&input)
+func main() {
+
+	go goroutine1(4)
+
+	go func() {
+		var times int
+		for {
+			times++
+			fmt.Println("num = ", times)
+			time.Sleep(time.Second)
+		}
+	}()
+	time.Sleep(3 * time.Second)
+	fmt.Println("Hello main")
 }

@@ -1,4 +1,5 @@
 package main
+
 // zhu
 import (
 	"github.com/godbus/dbus/v5"
@@ -21,8 +22,7 @@ func (o *Obj) GetInterfaceName() string {
 
 func main() {
 	service, err := dbusutil.MockConnections()
-	obj := &Obj{
-	}
+	obj := &Obj{}
 	err = service.Export("/p1/p2/p3", obj)
 	err = service.RequestName("p1.p2.p3")
 	service.Wait()

@@ -48,5 +48,4 @@ func main() {
 	fmt.Println("Salary changed :")
 	fmt.Println(bs)
 
-
 }

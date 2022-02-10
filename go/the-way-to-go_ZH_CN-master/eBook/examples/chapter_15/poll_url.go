@@ -13,7 +13,7 @@ var urls = []string{
 }
 
 func main() {
-	// Execute an HTTP HEAD request for all url's 
+	// Execute an HTTP HEAD request for all url's
 	// and returns the HTTP status string or an error string.
 	for _, url := range urls {
 		resp, err := http.Head(url)
@@ -23,6 +23,7 @@ func main() {
 		fmt.Print(url, ": ", resp.Status)
 	}
 }
+
 /* Output:
 http://www.google.com/ :  302 Found
 http://golang.org/ :  200 OK

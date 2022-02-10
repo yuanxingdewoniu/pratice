@@ -2,8 +2,8 @@
 package main
 
 import (
-	"text/template"
 	"fmt"
+	"text/template"
 )
 
 func main() {
