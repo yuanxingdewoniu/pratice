@@ -2,5 +2,5 @@
 0.0.1
 init commmit 
 problem :
- *dbus need resolve bug
+ dbus need resolve bug
 
