@@ -5,21 +5,27 @@ import (
 	"time"
 )
 
-func running() {
-	var times int
-	// 构建一个无限循环
-	for {
-		times++
-		fmt.Println("tick ", times)
-		N
-		// 演示1秒
-		time.Sleep(time.Second)
+func goroutine1(t int) {
+
+	for t > 0 {
+		t--
+		fmt.Println("Hello goroutine ", t)
 	}
+
 }
 
 func main() {
 
-	// 并发执行程序
-	go running()
-	time.Sleep(time.Second * 2)
+	go goroutine1(4)
+
+	go func() {
+		var times int
+		for {
+			times++
+			fmt.Println("num = ", times)
+			time.Sleep(time.Second)
+		}
+	}()
+	time.Sleep(3 * time.Second)
+	fmt.Println("Hello main")
 }
