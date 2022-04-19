@@ -1,0 +1,112 @@
+@startuml
+frame "第三方应用"{
+ [安全中心]
+ [域管]
+ [...]
+}
+
+
+
+
+frame "管控模块" {
+frame "kernel_selinux"{
+	[读写设备标签]
+        [写设备标签]
+        [禁止读写标签]
+
+}
+
+frame "kernel_hook" {
+	[打标签] 
+        [读写事件拦截] 
+}
+
+}
+
+
+frame "监控设备插拔" {
+	[设备信息]
+        [增加设备]
+        [移除设备]
+}
+
+
+actor “USB存储设备插拔事件”
+
+
+USB存储设备插拔事件->监控设备插拔
+
+
+监控设备插拔->第三方应用:插拔通知\n设备信息
+
+第三方应用->kernel_hook: 策略配置
+
+
+actor “读写操作”
+读写操作->读写事件拦截:读写权限请求
+
+
+kernel_hook -->kernel_selinux:打标签\n 权限校验
+
+kernel_selinux -down->读写操作:\n权限检查结果\n 放行或者禁止
+
+@enduml
+frame "安全应用"{
+ [安全中心]
+ [域管..]
+}
+
+
+
+
+frame "管控模块" {
+frame "kernel_selinux"{
+	[读写设备标签 \n  写设备标签 \n  禁止读写标签]
+        [权限检查]
+}
+
+frame "hookmanager" {
+	[打标签] 
+        [读写事件拦截] 
+}
+
+}
+
+
+frame "监控设备插拔" {
+frame "设备信息" {
+        [UID \n PID]
+}
+
+frame "状态变更" {
+        [增加 移除 ]
+}
+
+frame "管控策略" {
+        [UID1--只读 \nUID2--只写 \nUID3--读写控制 \nUID4--禁止读写]
+}
+
+   
+
+}
+
+
+actor “USB存储设备插拔事件”
+
+
+USB存储设备插拔事件 -->监控设备插拔
+
+
+管控策略  <-->安全应用:配置策略\nDBUS通知\n设备信息\n 增删改\n查策略
+
+
+actor “读写操作”
+读写操作-->读写事件拦截:读写权限请求
+
+
+hookmanager <-->kernel_selinux:打标签\n 权限校验 \n \n权限检查结果\n 放行或者禁止
+
+
+
+管控模块 -> 管控策略
+#enduml
