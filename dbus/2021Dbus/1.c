@@ -1,4 +1,4 @@
-#include <stdio.h>
+hinclude <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dbus/dbus-glib.h>
@@ -123,8 +123,8 @@ int send_a_signal( char * sigvalue)
     return 0;
 }
 int main( int argc , char ** argv){
-   listen_signal();
+   //listen_signal();
 	send_a_signal("Hello,world!");
-   listen_signal();
+ //listen_signal();
    return 0;
 }

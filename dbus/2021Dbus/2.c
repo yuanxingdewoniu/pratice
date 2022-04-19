@@ -124,6 +124,6 @@ int send_a_signal( char * sigvalue)
 }
 int main( int argc , char ** argv){
    send_a_signal("Hello,world!");
-   listen_signal();
+//   listen_signal();
    return 0;
 }
