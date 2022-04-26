@@ -1,0 +1,222 @@
+#!/usr/bin/env python
+
+import sys
+import os
+import subprocess
+import tempfile
+import time
+import optparse
+import datetime
+import traceback
+
+class CpuUsage:
+	def __init__(self):
+		self.start_time = datetime.datetime.now()
+		self.last_time = self.start_time
+		self.current = list(self.__read_curr_stat())
+		
+	def __read_curr_stat(self):
+		stat = []
+		f = open("/proc/stat")
+		for line in f.readlines():
+			if not line.startswith("cpu"):
+				break
+			
+			fields = [int(_) for _ in line.split(' ') if len(_) > 0 and not _.startswith("cpu")]
+			if len(stat) == 0: #first line
+				stat = fields[:]
+			else:
+				for i in range(len(fields)):
+					stat[i] = stat[i] + fields[i]
+		f.close()
+		return stat
+
+	def get_usage(self):
+		now = datetime.datetime.now()
+		if now < self.last_time + datetime.timedelta(milliseconds = 100):
+			time.sleep(0.1)
+		cur = list(self.__read_curr_stat())
+		now = datetime.datetime.now()
+		delta_total = sum(cur) - sum(self.current)
+		delta_idle = cur[3] - self.current[3]
+		self.last_time = now
+		self.current = cur
+		return (delta_total - delta_idle)*10000/delta_total
+
+def run_shell(command, mayFreeze=False):
+	def check_retcode(retcode, cmd):
+		if 0 != retcode:
+			print >> sys.stderr, 'err executing ' + cmd + ':', retcode
+			sys.exit(retcode)
+
+	def read_close(f):
+		f.seek(0)
+		d = f.read()
+		f.close()
+		return d
+	
+	#print >> sys.stderr, '-- Executing', command
+	if mayFreeze:
+		tempout, temperr = tempfile.TemporaryFile(), tempfile.TemporaryFile()#open(os.devnull, 'w')
+		p = subprocess.Popen(command, stdout=tempout, stderr=temperr)
+		p.wait()
+		output, errout = read_close(tempout), read_close(temperr)
+	else:
+		p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		output = p.stdout.read()
+		p.wait()
+		errout = p.stderr.read()
+		p.stdout.close()
+		p.stderr.close()
+	
+	#check_retcode(p.returncode, command)
+	return (output.strip(), errout.strip())
+
+def get_disk_usage():
+	usages = []
+	output, errout = run_shell(["/bin/df", "-h"])
+	for line in output.splitlines():
+		if not line.startswith("/"):
+			continue
+
+		fields = [_ for _ in line.split(' ') if len(_) > 0]
+		if len(fields) <> 6:
+			print line, len(fields)
+			continue
+
+		usage = [fields[0], fields[1], fields[2], fields[3], int(fields[4].replace('%', '')), fields[5]]
+		usages.append(usage)
+
+	return usages
+
+def get_disk_usage2():
+	paths = []
+	f = open("/proc/mounts")
+	for line in f.readlines():
+		if not line.startswith("/"):
+			continue
+
+		fields = line.split(' ')
+		paths.append((fields[0], fields[1]))
+	f.close()
+
+	usages = []
+	for p in paths:
+		stat = os.statvfs(p[1])
+		if stat.f_blocks == 0:
+			continue
+		usages.append((p[0], p[1], stat.f_blocks, stat.f_bavail, stat.f_bfree, (stat.f_blocks - stat.f_bfree)*10000/stat.f_blocks))
+	return usages
+
+def get_mem_usage():
+	total, avail, mfree = 0, 0, 0
+	f = open("/proc/meminfo")
+	for line in f.readlines():
+		if line.startswith('MemTotal:'):
+			total = int([_ for _ in line.split(' ') if len(_) > 0][1])
+		elif line.startswith('MemAvailable:'):
+			avail = int([_ for _ in line.split(' ') if len(_) > 0][1])
+		elif line.startswith('MemFree:'):
+			mfree = int([_ for _ in line.split(' ') if len(_) > 0][1])
+
+		if total > 0 and avail > 0:
+			break
+	f.close()
+	if avail == 0:
+		avail = mfree
+	return (total, total - avail, 10000*(total - avail) / total)
+
+def get_msg(stat, name, threshold, last_warning, *kw):
+	now = datetime.datetime.now()
+	'''
+	warning_templs = ['[{0}] Disk Space Warning: Partition {3}\'s occupied space is {1}%, above {2}%',
+			'[{0}] Memory Warning: occupied memory is {1}%, above {2}%',
+			'[{0}] CPU Warning: cpu usage is {1}%, above {2}%']
+	no_warning_templs = ['[{0}] Disk no warning notification: Partition {3}\'s occupied space is {1}%, below {2}%',
+			'[{0}] Memory no warning notification: occupied memory is {1}%, below {2}%',
+			'[{0}] CPU no warning notification: cpu usage is {1}%, below {2}%']
+	'''
+	warning_templs = ['[{0}] \033[1;31mDisk Space Warning: Partition {3}\'s occupied space is {1}%, above {2}%\033[0m',
+			'[{0}] \033[1;31mMemory Warning: occupied memory is {1}%, above {2}%\033[0m',
+			'[{0}] \033[1;31mCPU Warning: cpu usage is {1}%, above {2}%\033[0m']
+	no_warning_templs = ['[{0}] \033[1;32mDisk no warning notification: Partition {3}\'s occupied space is {1}%, below {2}%\033[0m',
+			'[{0}] \033[1;32mMemory no warning notification: occupied memory is {1}%, below {2}%\033[0m',
+			'[{0}] \033[1;32mCPU no warning notification: cpu usage is {1}%, below {2}%\033[0m']
+	min_warning_interval = datetime.timedelta(seconds = 30)
+	time_fmt = '%Y-%m-%d %H:%M:%S'
+
+	warning_time, msg = last_warning, ''
+	
+	if stat < threshold:
+		if last_warning + min_warning_interval > now:
+			warning_time = datetime.datetime(2000, 1, 1)
+			msg = no_warning_templs[name].format(now.strftime(time_fmt), stat/100, threshold/100, *kw)
+	elif last_warning + min_warning_interval < now:
+		warning_time = now
+		msg = warning_templs[name].format(now.strftime(time_fmt), stat/100, threshold/100, *kw)
+	
+	return (warning_time, msg)
+
+def append_file(filename, msgs):
+	try:
+		f = open(filename, "a")
+		f.write("\n".join(msgs) + "\n")
+		f.close()
+	except Exception, e:
+		#traceback.print_exc(file = sys.stderr)
+		pass
+
+def getopts():
+	def invalid(opt):
+		return opt is None or not opt.isdigit() or int(opt) < 50 or int(opt) > 99
+
+	def get_int(opt):
+		return 90 if invalid(opt) else int(opt)			
+		
+	parser = optparse.OptionParser()
+	parser.add_option('-c', '--cpu', dest="cpu", default='90', help="set CPU alert threshold(50 ~ 99)", metavar="CPU")
+	parser.add_option('-m', '--memory', dest="mem", default='90', help="set Memory alert threshold(50 ~ 99)", metavar="MEMORY")
+	parser.add_option('-d', '--disk', dest="disk", default='90', help="set Disk alert threshold(50 ~ 99)", metavar="DISK")
+
+	(opts, args) = parser.parse_args()
+
+	return get_int(opts.cpu)*100, get_int(opts.mem)*100, get_int(opts.disk)*100
+
+
+if __name__ == '__main__':
+	cpu, mem, disk = getopts()
+	last_warning, def_warning_time = {}, datetime.datetime(2000, 1, 1)
+	last_warning.setdefault('mem', def_warning_time)
+	last_warning.setdefault('cpu', def_warning_time)
+	cu = CpuUsage()
+
+	while True:
+		msgs = []
+		try:
+			time.sleep(3)
+
+			disk_usages = get_disk_usage2()
+			for dus in disk_usages:
+				last_warning.setdefault(dus[1], def_warning_time)
+				last_warning[dus[1]], msg = get_msg(dus[-1], 0, disk, last_warning[dus[1]], dus[1])
+				if len(msg) > 0:
+					msgs.append(msg)
+
+			mem_usage = get_mem_usage()
+			last_warning['mem'], msg = get_msg(mem_usage[-1], 1, mem, last_warning['mem'])
+			if len(msg) > 0:
+				msgs.append(msg)
+
+			cpu_usage = cu.get_usage()
+			last_warning['cpu'], msg = get_msg(cpu_usage, 2, cpu, last_warning['cpu'])
+			if len(msg) > 0:
+				msgs.append(msg)
+
+			if len(msgs) > 0:
+				run_shell(['/usr/bin/wall', '-n', '\n'.join(msgs)])
+				if os.getuid() == 0:
+					append_file(os.path.expanduser('~') + '/.alertd_all', msgs)
+					append_file(os.path.expanduser('~') + '/.alertd_new', msgs)
+		except Exception, e:
+			#traceback.print_exc(file = sys.stderr)
+			break

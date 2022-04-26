@@ -1,0 +1,198 @@
+#!/usr/bin/env python
+
+import sys
+import os
+import subprocess
+import tempfile
+import datetime
+import re
+import pwd
+import traceback
+
+def run_shell(command, mayFreeze=False):
+	def check_retcode(retcode, cmd):
+		if 0 != retcode:
+			print >> sys.stderr, 'err executing ' + cmd + ':', retcode
+			sys.exit(retcode)
+
+	def read_close(f):
+		f.seek(0)
+		d = f.read()
+		f.close()
+		return d
+	
+	#print >> sys.stderr, '-- Executing', command
+	if mayFreeze:
+		tempout, temperr = tempfile.TemporaryFile(), tempfile.TemporaryFile()
+		p = subprocess.Popen(command, stdout=tempout, stderr=temperr)
+		p.wait()
+		output, errout = read_close(tempout), read_close(temperr)
+	else:
+		p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		output = p.stdout.read()
+		p.wait()
+		errout = p.stderr.read()
+		p.stdout.close()
+		p.stderr.close()
+	
+	#check_retcode(p.returncode, command)
+	return (output.strip(), errout.strip())
+
+def get_uid(username):
+	try:
+		return pwd.getpwnam(username).pw_uid
+	except Exception, e:
+		return -1
+
+def parse_authlog(stats_ok, stats_bads, print_err):
+	now = datetime.datetime.now()
+	print now
+	pref_old = '^([A-Z][a-z]{2}) +(\d+) (\d{2})\:(\d{2})\:(\d{2}) .* '
+	pref_new = '^(\d+)\-(\d{2})\-(\d{2}) (\d{2})\:(\d{2})\:(\d{2}) .* '
+	# auth_logs, _ = run_shell(["grep", "-i", "-P", "--binary-files=text", "\:session\)\: session opened for user |\: failed |gdm\-password\:auth\)\: authentication fail", "/var/log/secure"])
+	auth_logs, _ = run_shell(["grep", "-i", "-P", "--binary-files=text", "\:session\)\: session opened for user |\: +failed ", "/var/log/auth.log"])
+	for l in auth_logs.splitlines():
+		m = re.match(pref_new + 'sshd\[\d+\]\: +Failed password for (.+) from', l)
+		if m is None:
+			#m = re.match(pref + 'login\: FAILED LOGIN \d+ FROM \(null\) FOR (.+), Authentication failure$', l)
+			m = re.match(pref_new + 'login\[\d+\]\: +FAILED LOGIN \(\d+\) on \'/dev/tty\d+\' FOR \'(.+)\', Authentication failure$', l)
+		#if m is None:
+		#	m = re.match(pref + 'gdm\-password\: pam_unix\(gdm\-password\:auth\)\: authentication failure; logname= uid=0 euid=0 tty=\:0 ruser= rhost=  user=(.+)$', l)
+
+		stats = None
+		if m is not None:
+			stats = stats_bads
+			login_time = datetime.datetime.strptime(' '.join(m.groups()[:-1]), '%Y %m %d %H %M %S')
+		else:
+			#m = re.match(pref + 'login\: pam_unix\(login\:session\)\: session opened for user (.+) by LOGIN\(uid=0\)$', l)
+			m = re.match(pref_new + 'login\[\d+\]\: +pam_unix\(login\:session\)\: session opened for user (.+) by LOGIN\(uid=0\)$', l)
+			if m is None:
+				m = re.match(pref_new + 'sshd\[\d+\]\: +pam_unix\(sshd\:session\)\: session opened for user (.+) by \(uid=0\)$', l)
+			#if m is None:
+			#	m = re.match(pref + 'pam\: gdm-password\: pam_unix\(gdm-password\:session\)\: session opened for user (.+) by \(uid=0\)$', l)
+
+			if m is not None:
+				stats = stats_ok
+				login_time = datetime.datetime.strptime(' '.join(m.groups()[:-1]), '%Y %m %d %H %M %S')
+			else:
+				m = re.match(pref_old + 'sshd\[\d+\]\: +Failed password for (.+) from', l)
+				if m is None:
+					#m = re.match(pref + 'login\: FAILED LOGIN \d+ FROM \(null\) FOR (.+), Authentication failure$', l)
+					m = re.match(pref_old + 'login\[\d+\]\: +FAILED LOGIN \(\d+\) on \'/dev/tty\d+\' FOR \'(.+)\', Authentication failure$', l)
+				#if m is None:
+				#	m = re.match(pref + 'gdm\-password\: pam_unix\(gdm\-password\:auth\)\: authentication failure; logname= uid=0 euid=0 tty=\:0 ruser= rhost=  user=(.+)$', l)
+
+				if m is not None:
+					stats = stats_bads
+					login_time = datetime.datetime.strptime(' '.join(m.groups()[:-1]) + ' ' + str(now.year), '%b %d %H %M %S %Y')
+				else:
+					#m = re.match(pref + 'login\: pam_unix\(login\:session\)\: session opened for user (.+) by LOGIN\(uid=0\)$', l)
+					m = re.match(pref_old + 'login\[\d+\]\: +pam_unix\(login\:session\)\: session opened for user (.+) by LOGIN\(uid=0\)$', l)
+					if m is None:
+						m = re.match(pref_old + 'sshd\[\d+\]\: +pam_unix\(sshd\:session\)\: session opened for user (.+) by \(uid=0\)$', l)
+					#if m is None:
+					#	m = re.match(pref + 'pam\: gdm-password\: pam_unix\(gdm-password\:session\)\: session opened for user (.+) by \(uid=0\)$', l)
+
+					if m is not None:
+						stats = stats_ok
+						login_time = datetime.datetime.strptime(' '.join(m.groups()[:-1]) + ' ' + str(now.year), '%b %d %H %M %S %Y')
+				if stats is None:
+					if print_err:
+						print >>sys.stderr, 'bad line: ' + l
+					continue	
+				if login_time > now:
+					login_time = datetime.datetime.strptime(' '.join(m.groups()[:-1]) + ' ' + str(now.year - 1), '%b %d %H %M %S %Y')
+
+		if stats is None:
+			if print_err:
+				print >>sys.stderr, 'bad line: ' + l
+			continue			
+
+		name = m.groups()[-1]
+		if name not in stats:
+			stats[name] = {'uid': get_uid(name), 'total': 0, 'latest': datetime.datetime(2000, 1, 1)}
+
+		try:
+
+			if login_time > stats[name]['latest']:
+				stats[name]['latest'] = login_time
+				stats[name]['total'] += 1
+		except Exception, e:
+			if print_err:
+				traceback.print_exc(file = sys.stderr)
+			continue
+
+def save_stats(stats, filename, print_err):
+	lines = []
+	for user, s in stats.items():
+		if s['uid'] == -1:
+			continue
+
+		lines.append('{0} {1} {2} {3}'.format(user, s['uid'], s['total'], s['latest'].strftime('%Y-%m-%d_%H:%M:%S')))
+
+	try:
+		f = open(filename, 'w')
+		f.write('\n'.join(lines))
+		f.close()
+	except Exception, e:
+		if print_err:
+			traceback.print_exc(file = sys.stderr)			
+
+def load_stats(filename, print_err):
+	lines = []
+	try:
+		f = open(filename, 'r')
+		lines = f.readlines()
+		f.close()
+	except Exception, e:
+		if print_err:
+			traceback.print_exc(file = sys.stderr) 
+
+	stats = {}
+	for l in lines:
+		fields = l.split()
+		if len(fields) <> 4:
+			continue
+
+		try:
+			name, uid = fields[0], int(fields[1])
+			if get_uid(name) != uid or uid == -1:
+				continue
+
+			stats[name] = {'uid': uid, 'total': int(fields[2]), 'latest': datetime.datetime.strptime(fields[3], '%Y-%m-%d_%H:%M:%S')}
+		except Exception, e:
+			if print_err:
+				traceback.print_exc(file = sys.stderr) 
+	return stats
+
+if __name__ == '__main__':
+	print_all = len(sys.argv) == 2 and sys.argv[1] == '-p'
+	lasts_file, lastsb_file = '/etc/.lasts', '/etc/.lastsb'
+	stats, statsb = load_stats(lasts_file, print_all), load_stats(lastsb_file, print_all)
+	parse_authlog(stats, statsb, print_all)
+	
+	if print_all:
+		print '-' * 80
+		for user, s in stats.items():
+			print user, s['uid'], s['total'], s['latest']
+
+		print '-' * 80
+		for user, s in statsb.items():
+			print user, s['uid'], s['total'], s['latest']
+
+	save_stats(stats, lasts_file, print_all)
+	save_stats(statsb, lastsb_file, print_all) 
+
+	current, oks, bads = os.environ['LOGNAME'], 0, 0
+	if current in stats:
+		oks = stats[current]['total']
+	if current in statsb:
+		bads = statsb[current]['total']
+
+	print "Login statistics for {0}, successful logins: {1}, bad logins: {2}".format(current, oks, bads)
+
+	alertd_new = os.path.expanduser('~/.alertd_new')
+	if os.getuid() == 0 and os.path.isfile(alertd_new):
+		output, _ = run_shell(['cat', alertd_new])
+		print output
+		os.remove(alertd_new)

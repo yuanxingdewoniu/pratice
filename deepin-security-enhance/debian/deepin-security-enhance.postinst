@@ -1,0 +1,45 @@
+#!/bin/sh
+set -e
+# Automatically added by dh_installsystemd/12.1.1
+if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-deconfigure" ] || [ "$1" = "abort-remove" ] ; then
+	# This will only remove masks created by d-s-h on package removal.
+	deb-systemd-helper unmask 'deepin-security-enhance.service' >/dev/null || true
+
+	# was-enabled defaults to true, so new installations run enable.
+	if deb-systemd-helper --quiet was-enabled 'deepin-security-enhance.service'; then
+		# Enables the unit on first installation, creates new
+		# symlinks on upgrades if the unit file has changed.
+		deb-systemd-helper enable 'deepin-security-enhance.service' >/dev/null || true
+	else
+		# Update the statefile to add new symlinks (if any), which need to be
+		# cleaned up on purge. Also remove old symlinks.
+		deb-systemd-helper update-state 'deepin-security-enhance.service' >/dev/null || true
+	fi
+fi
+# End automatically added section
+# Automatically added by dh_installsystemd/12.1.1
+if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-deconfigure" ] || [ "$1" = "abort-remove" ] ; then
+	if [ -d /run/systemd/system ] || [ -f /etc/systemd/system/sysinit.target.wants/deepin-security-enhance.service ] ; then
+		systemctl --system daemon-reload >/dev/null || true
+		deb-systemd-invoke disable 'deepin-security-enhance.service' >/dev/null || true
+	fi
+fi
+# End automatically added section
+
+DEEPIN_SECURITY_DIR="/etc/deepin-security"
+DS_CONFIG_DIR=${DEEPIN_SECURITY_DIR}"/config"
+DS_SCRIPT_DIR=${DEEPIN_SECURITY_DIR}"/script"
+DS_STATE_DIR=${DEEPIN_SECURITY_DIR}"/state"
+
+if [ -d ${DEEPIN_SECURITY_DIR} ];then
+	chmod 0700 ${DEEPIN_SECURITY_DIR}	
+fi
+if [ -d ${DS_CONFIG_DIR} ];then
+	chmod 0700 ${DS_CONFIG_DIR}
+fi
+if [ -d ${DS_SCRIPT_DIR} ];then
+	chmod 0700 -R ${DS_SCRIPT_DIR}
+fi
+if [ -d ${DS_STATE_DIR} ];then
+	chmod 0700 -R ${DS_STATE_DIR}
+fi
