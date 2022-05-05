@@ -22,10 +22,37 @@ type Object struct {
 		SetLabel        func() `in:"labeltype,devicetype,label"`
 		GetLabel        func() `in:"labeltype" out:"labels"`
 		GetSEUserByName func() `in:"linuxuser" out:"seuser,level"`
+
+		// usb 存储接口
+		GetDeviceList     func() `out:"dev_list"` //??
+		SetGlobalPermMode func() `in:"mode" out:"result"`
+		GetGlobalPermMode func() `out:"mode"`
+		AddWhiteList      func() `in:"info"`
+		DeleteWhiteList   func() `in:"info"`
+		ModifyWhiteList   func() `in:"info"`
+		GetWhiteList      func() `out:"dev_list"` //??
 	}
+
 	signals *struct {
 		Receipt struct {
 			result bool
+		}
+
+		GlobalPermModeChanged struct {
+			mode int
+		}
+
+		WhitelistChanged struct {
+			mode int
+			info string //设备的信息
+		}
+
+		DeviceAdded struct {
+			info string //设备的信息
+		}
+
+		DeviceRemove struct {
+			info string //设备的信息
 		}
 	}
 }
