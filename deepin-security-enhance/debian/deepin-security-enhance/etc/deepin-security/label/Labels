@@ -1,0 +1,11 @@
+# Value correspondence table 
+#  --------------------------------------------------
+# |               |       1           |     2        |
+# |  device_type  |  removable media  |  disk        |
+# |  label_type   |  rootcontext      |  defcontext  |
+#  --------------------------------------------------
+
+# Label value corresponding to removable media mount type
+1:1="null",2="system_u:object_r:removable_t:s0"
+# Label value corresponding to disk mount type
+2:1="null",2="system_u:object_r:removable_t:s0"

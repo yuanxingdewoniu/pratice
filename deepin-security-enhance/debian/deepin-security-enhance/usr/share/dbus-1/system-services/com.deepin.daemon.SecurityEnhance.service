@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=com.deepin.daemon.SecurityEnhance
+Exec=/bin/false
+SystemdService=deepin-security-enhance.service

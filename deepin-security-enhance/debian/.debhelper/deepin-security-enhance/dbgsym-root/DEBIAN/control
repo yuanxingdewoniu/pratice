@@ -1,0 +1,12 @@
+Package: deepin-security-enhance-dbgsym
+Source: deepin-security-enhance
+Version: 1.1.3-1.1
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: liuxin <liuxin@uniontech.com>
+Installed-Size: 1492
+Depends: deepin-security-enhance (= 1.1.3-1.1)
+Section: debug
+Priority: optional
+Description: debug symbols for deepin-security-enhance
+Build-Ids: 54769dee6a36abf7ca7ed5335a10efbedfa9097b

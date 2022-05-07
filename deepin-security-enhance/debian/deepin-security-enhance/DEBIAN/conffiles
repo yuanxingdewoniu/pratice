@@ -1,0 +1,16 @@
+/etc/deepin-security/config/pam_common-password_cracklib
+/etc/deepin-security/config/pam_common-password_pwcheck
+/etc/deepin-security/config/pam_common-password_pwquality
+/etc/deepin-security/config/pam_dde.conf
+/etc/deepin-security/config/pam_lightdm
+/etc/deepin-security/config/pam_login
+/etc/deepin-security/config/pam_pwquality.conf
+/etc/deepin-security/config/pam_sshd
+/etc/deepin-security/config/selinux_config
+/etc/deepin-security/config/system_logind.conf
+/etc/deepin-security/config/watermark.py
+/etc/deepin-security/config/wkhtmltopdf
+/etc/deepin-security/label/Labels
+/etc/deepin-security/script/secadm_chown.sh
+/etc/deepin-security/script/security_enhance.sh
+/etc/deepin-security/state/Enable

@@ -1,3 +1,10 @@
+deepin-security-enhance (1.1.3-1.1) UNRELEASED; urgency=medium
+
+  * 编写usb 存储管控demo 测试接口.
+
+
+ -- Wang Xianli <wangxianli@uniontech.com>  Thu, 05 May 2022 15:26:56 +0800
+
 deepin-security-enhance (1.1.2-1) unstable; urgency=medium
 
   * Update security_enhance.sh: while closing security Level protect three, don't delete sysadm.

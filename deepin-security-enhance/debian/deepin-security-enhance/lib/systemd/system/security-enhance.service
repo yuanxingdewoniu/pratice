@@ -1,0 +1,16 @@
+[Unit]
+Description=Security Enhance Service
+DefaultDependencies=no
+Requires=local-fs.target
+Conflicts=shutdown.target
+After=local-fs.target
+Before=sysinit.target shutdown.target
+ConditionSecurity=selinux
+ConditionPathIsDirectory=/etc/selinux
+
+[Service]
+Type=oneshot
+ExecStart=/etc/deepin-security/script/secadm_chown.sh
+
+[Install]
+WantedBy=multi-user.target
