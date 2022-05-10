@@ -55,7 +55,7 @@ func isTruestedProcess(sender string) bool {
 }
 
 // 等保三级开关
-func (o *Object) Enable(sender dbus.Sender, enable bool, deleteadm bool, sysadmpasswd string, secadmpasswd string, audadmpasswd string) *dbus.Error {
+func (s *SecurityEnhance) Enable(sender dbus.Sender, enable bool, deleteadm bool, sysadmpasswd string, secadmpasswd string, audadmpasswd string) *dbus.Error {
 	var err error
 	var state string
 	var result bool
@@ -100,13 +100,13 @@ end:
 		result = true
 	}
 
-	GetService().conn.Emit(o, "Receipt", result)
+	GetService().conn.Emit(s, "Receipt", result)
 
 	return dbusutil.ToError(err)
 }
 
 // 获取等保三级状态
-func (o *Object) Status() (string, *dbus.Error) {
+func (s *SecurityEnhance) Status() (string, *dbus.Error) {
 	var state string
 	var err error
 	err, state = tools.GetEnhanceStatus()
@@ -116,7 +116,7 @@ func (o *Object) Status() (string, *dbus.Error) {
 	return state, dbusutil.ToError(err)
 }
 
-func (o *Object) GetDeviceList() (string, *dbus.Error) {
+func (r *RemovableStorageDevice) GetDeviceList() (string, *dbus.Error) {
 	var err error
 	var dev_list string
 	dev_list = "1111111111"
@@ -126,7 +126,7 @@ func (o *Object) GetDeviceList() (string, *dbus.Error) {
 	return dev_list, dbusutil.ToError(err)
 }
 
-func (o *Object) GetWhiteList() (string, *dbus.Error) {
+func (r *RemovableStorageDevice) GetWhiteList() (string, *dbus.Error) {
 
 	var err error
 	var dev_list string
@@ -138,7 +138,7 @@ func (o *Object) GetWhiteList() (string, *dbus.Error) {
 
 }
 
-func (o *Object) AddWhiteList(info string) *dbus.Error {
+func (r *RemovableStorageDevice) AddWhiteList(info string) *dbus.Error {
 
 	var err error
 
@@ -148,7 +148,7 @@ func (o *Object) AddWhiteList(info string) *dbus.Error {
 
 }
 
-func (o *Object) DeleteWhiteList(info string) *dbus.Error {
+func (r *RemovableStorageDevice) DeleteWhiteList(info string) *dbus.Error {
 	var err error
 
 	err = fmt.Errorf("GetDeviceList test \n ")
@@ -157,7 +157,7 @@ func (o *Object) DeleteWhiteList(info string) *dbus.Error {
 
 }
 
-func (o *Object) ModifyWhiteList(info string) *dbus.Error {
+func (r *RemovableStorageDevice) ModifyWhiteList(info string) *dbus.Error {
 	var err error
 
 	err = fmt.Errorf("ModifyWhiteList test \n ")

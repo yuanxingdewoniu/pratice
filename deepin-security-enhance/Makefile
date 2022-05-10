@@ -1,4 +1,8 @@
 PROG_SECURITY_ENHANCE_DAEMON=deepin-security-enhance
+PROG_REMOVABLE_STORAGE_DEVICE_DAEMON=uos-removable-storage-device-manager
+
+
+
 
 PROG_SECURITY_ENHANCE_SUBCOMMAND_ALERTD=alertd
 PROG_SECURITY_ENHANCE_SUBCOMMAND_LOGIN_COUNTS=login_counts
@@ -11,9 +15,17 @@ PROG_FILE_DBUS_SERVICE=com.deepin.daemon.SecurityEnhance.service
 PROG_FILE_SYSTEMD=deepin-security-enhance.service
 PROG_FILE_SEPARATION_OF_POWERS=security-enhance.service
 
+
+
+
+PROG_REMOVEABLE_STORAGE_DEVICE_CONF=com.deepin.daemon.RemovableStorageDevice.conf
+PROG_REMOVEABLE_STORAGE_DEVICE_SYSTEM=uos-removable-storage-device-manager.service
+
+
 DIR_CONF=misc/conf
 DIR_SYSTEMD=misc/systemd
 DIR_SECURITY_ENHANCE=cmd/deepin-security-enhance-daemon
+DIR_REMOVABLE_STORAGE_DEVICE_MANAGER=cmd/uos-removable-storage-device-manager
 DIR_SUBCOMMAND=misc/subcommand
 DIR_SCRIPT_FILE=misc/script
 DIR_CONFIGURATION_FILE_COPY=misc/copy
@@ -40,6 +52,7 @@ prepare:
 
 build: prepare
 		env GOPATH=${PWD}/${GOPATH_DIR}:${GOCODE} go build -o ${PWD}/${PROG_SECURITY_ENHANCE_DAEMON} ./${DIR_SECURITY_ENHANCE}
+		env GOPATH=${PWD}/${GOPATH_DIR}:${GOCODE} go build -o ${PWD}/${PROG_REMOVABLE_STORAGE_DEVICE_DAEMON} ./${DIR_REMOVABLE_STORAGE_DEVICE_MANAGER}
 
 install:
 		mkdir -pv ${DESTDIR}${PREFIX}/bin/
@@ -62,6 +75,13 @@ install:
 		cp -rf ${DIR_ENHANCE_STATE}/* ${DESTDIR}/etc/deepin-security/state/
 		cp -rf ${DIR_LABEL}/* ${DESTDIR}/etc/deepin-security/label/
 
+
+		cp -rf ${PROG_REMOVABLE_STORAGE_DEVICE_DAEMON} ${DESTDIR}${PREFIX}/sbin/
+		cp -rf ${DIR_CONF}/${PROG_REMOVEABLE_STORAGE_DEVICE_CONF} ${DESTDIR}${PREFIX}/share/dbus-1/system.d/
+		cp -rf ${DIR_SYSTEMD}/${PROG_REMOVEABLE_STORAGE_DEVICE_SYSTEM}  ${DESTDIR}/lib/systemd/system/
+
+
+
 uninstall:
 		rm ${DESTDIR}${PREFIX}/sbin/${PROG_SECURITY_ENHANCE_DAEMON}
 		rm ${DESTDIR}${PREFIX}/share/dbus-1/system.d/${PROG_FILE_CONF}
@@ -72,7 +92,17 @@ uninstall:
 		rm ${DESTDIR}${PREFIX}/bin/${PROG_SECURITY_ENHANCE_SUBCOMMAND_LOGIN_COUNTS}
 		rm ${DESTDIR}/etc/deepin-security/ -rf
 
+
+	
+
+		rm ${DESTDIR}${PREFIX}/sbin/${PROG_REMOVABLE_STORAGE_DEVICE_DAEMON}
+		rm ${DESTDIR}${PREFIX}/share/dbus-1/system.d/${PROG_REMOVEABLE_STORAGE_DEVICE_FILE_CONF}
+		rm ${DESTDIR}${PREFIX}/lib/systemd/system/${PROG_REMOVEABLE_STORAGE_DEVICE_SYSTEM}
+
+
+
+
 clean:
-		rm -rf ${GOPATH_DIR} ${PROG_SECURITY_ENHANCE_DAEMON}
+		rm -rf ${GOPATH_DIR} ${PROG_SECURITY_ENHANCE_DAEMON} ${PROG_REMOVABLE_STORAGE_DEVICE_DAEMON}
 
 rebuild: clean build

@@ -2,7 +2,7 @@ Package: deepin-security-enhance
 Version: 1.1.3-1.1
 Architecture: amd64
 Maintainer: liuxin <liuxin@uniontech.com>
-Installed-Size: 3628
+Installed-Size: 6737
 Depends: libc6 (>= 2.3.2), libselinux1 (>= 1.32), python, python3, selinux-policy-dev, selinux-policy-default (>= 2:2.20220111-1), policycoreutils, policycoreutils-python-utils, auditd
 Section: devel
 Priority: optional

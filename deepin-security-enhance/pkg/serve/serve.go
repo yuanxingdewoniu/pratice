@@ -7,21 +7,48 @@ import (
 	"pkg.deepin.io/lib/dbusutil"
 )
 
+
+// dbus后台服务执行程序
+var (
+	SecurityEnhanceDaemon = "deepin-security-enhance"
+	RemovableStorageDeviceDaemon = "uos-usb-storage-daemon"
+)
+
+
 // dbus服务信息
 const (
-	dbusName = "com.deepin.daemon.SecurityEnhance"  // @Name: 	名称
-	dbusPath = "/com/deepin/daemon/SecurityEnhance" // @Path:	地址
-	dbusIFC  = "com.deepin.daemon.SecurityEnhance"  // @IFC:	接口名
+	SecurityEnhanceName = "com.deepin.daemon.SecurityEnhance"  // @Name: 	等保名称
+	SecurityEnhancePath = "/com/deepin/daemon/SecurityEnhance" // @Path:	等保地址
+	SecurityEnhanceIFC  = "com.deepin.daemon.SecurityEnhance"  // @IFC:	等保接口名
+
+	RemovableStorageDeviceName = "com.deepin.daemon.RemovableStorageDevice"  // @Name: 	USB存储管控名称
+	RemovableStorageDevicePath = "/com/deepin/daemon/RemovableStorageDevice" // @Path:	USB存储管控地址
+	RemovableStorageDeviceIFC  = "com.deepin.daemon.RemovableStorageDevice"  // @IFC:	USB存储管控接口名
 )
 
 // dbus服务对象
-type Object struct {
+type SecurityEnhance struct {
 	methods *struct {
 		Enable          func() `in:"enable,deleteadm,sysadmpasswd,secuadmpasswd,audadmpasswd"`
 		Status          func() `out:"status"`
 		SetLabel        func() `in:"labeltype,devicetype,label"`
 		GetLabel        func() `in:"labeltype" out:"labels"`
 		GetSEUserByName func() `in:"linuxuser" out:"seuser,level"`
+
+	}
+
+	signals *struct {
+		Receipt struct {
+			result bool
+		}
+
+	}
+}
+
+
+// dbus服务对象
+type RemovableStorageDevice struct {
+	methods *struct {
 
 		// usb 存储接口
 		GetDeviceList     func() `out:"dev_list"` //??
@@ -34,10 +61,6 @@ type Object struct {
 	}
 
 	signals *struct {
-		Receipt struct {
-			result bool
-		}
-
 		GlobalPermModeChanged struct {
 			mode int
 		}
@@ -57,10 +80,13 @@ type Object struct {
 	}
 }
 
+
+
 // dbus 对象
 type Service struct {
-	conn   *dbusutil.Service
-	Object *Object
+	conn                   *dbusutil.Service
+	SecurityEnhance        *SecurityEnhance
+	RemovableStorageDevice *RemovableStorageDevice
 }
 
 // 实例化 dbus
@@ -86,29 +112,57 @@ func newService() (*Service, error) {
 	if err != nil {
 		return nil, fmt.Errorf("new system service is error:%s\n", err)
 	}
-	object := &Object{}
-	dbusService = &Service{conn: srv, Object: object}
+	securityenhance := &SecurityEnhance{}
+    removablestoragedevice := &RemovableStorageDevice{}
+
+	dbusService = &Service{conn: srv, SecurityEnhance:securityenhance,RemovableStorageDevice:removablestoragedevice }
 	return dbusService, nil
 }
 
-// 外部调用
-func (srv *Service) Init() error {
-	return srv.initDBus()
+// 外部调用 初始化注册指定服务对象
+func (srv *Service) Init(daemonName string) error {
+	switch daemonName {
+	case SecurityEnhanceDaemon:
+		return srv.initSecurityEnhanceDbus()
+	case RemovableStorageDeviceDaemon:
+		return srv.initRemovableStorageDeviceDbus()
+	default:
+		return fmt.Errorf("Failed to init deamon")
+	}
 }
 
-// 外调
-func (srv *Service) initDBus() error {
-	err := srv.conn.Export(dbusPath, GetService().Object)
+
+// 初始化 等保管控的服务对象
+func (srv *Service) initSecurityEnhanceDbus() error {
+	err := srv.conn.Export(SecurityEnhancePath, GetService().SecurityEnhance)
 	if err != nil {
 		return err
 	}
-	return srv.conn.RequestName(dbusName)
+	return srv.conn.RequestName(SecurityEnhanceName)
 }
 
-// 获取 dbus对象 ifc名称
-func (o *Object) GetInterfaceName() string {
-	return dbusIFC
+// 初始化 注册USB设备管控的服务对象
+func (srv *Service) initRemovableStorageDeviceDbus() error {
+	err := srv.conn.Export(RemovableStorageDevicePath, GetService().RemovableStorageDevice)
+	if err != nil {
+		return err
+	}
+	return srv.conn.RequestName(RemovableStorageDeviceName)
 }
+
+
+// 获取 dbus对象 ifc名称
+func (r *SecurityEnhance) GetInterfaceName() string {
+	return SecurityEnhanceIFC
+}
+
+func (r *RemovableStorageDevice) GetInterfaceName() string {
+	return RemovableStorageDeviceIFC
+}
+
+
+
+
 
 // 循环
 func (srv *Service) Loop() {

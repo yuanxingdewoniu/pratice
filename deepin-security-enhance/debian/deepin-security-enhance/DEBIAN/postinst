@@ -23,6 +23,17 @@ if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-decon
 		systemctl --system daemon-reload >/dev/null || true
 		deb-systemd-invoke disable 'deepin-security-enhance.service' >/dev/null || true
 	fi
+
+
+	deb-systemd-helper unmask 'uos-removable-storage-device-manager.service' >/dev/null || true
+	if deb-systemd-helper --quiet was-enabled 'uos-removable-storage-device-manager.service'; then
+		deb-systemd-helper enable 'uos-removable-storage-device-manager.service' >/dev/null || true
+	else
+		deb-systemd-helper update-state 'uos-removable-storage-device-manager.service' >/dev/null || true
+	fi
+
+
+
 fi
 # End automatically added section
 

@@ -9,6 +9,7 @@ fi
 if [ "$1" = "remove" ]; then
 	if [ -x "/usr/bin/deb-systemd-helper" ]; then
 		deb-systemd-helper mask 'deepin-security-enhance.service' >/dev/null || true
+		deb-systemd-helper mask 'uos-removable-storage-device-manager.service' >/dev/null || true
 	fi
 fi
 
@@ -16,6 +17,10 @@ if [ "$1" = "purge" ]; then
 	if [ -x "/usr/bin/deb-systemd-helper" ]; then
 		deb-systemd-helper purge 'deepin-security-enhance.service' >/dev/null || true
 		deb-systemd-helper unmask 'deepin-security-enhance.service' >/dev/null || true
+		deb-systemd-helper purge 'uos-removable-storage-device-manager.service' >/dev/null || true
+		deb-systemd-helper unmask 'uos-removable-storage-device-manager.service' >/dev/null || true
+
+
 	fi
 fi
 # End automatically added section

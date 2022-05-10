@@ -1,9 +1,12 @@
 b7268df40b8fb04cddcc3176da1751ca  lib/systemd/system/deepin-security-enhance.service
 926b4f275727ce10ec67af29d65a77dd  lib/systemd/system/security-enhance.service
+d24b316c61579857eead698e009f5462  lib/systemd/system/uos-removable-storage-device-manager.service
 58dd98667ebe177404b30a046d198960  usr/bin/alertd
 5dc4b88f97bf49f416f36d2638049d12  usr/bin/login_counts
-3662556c65bbd7c11f43aafa5ec12ec9  usr/sbin/deepin-security-enhance
+270f87ae5e1a94646e092a98471e2e86  usr/sbin/deepin-security-enhance
+481d637f578288c0c1e1a02c0f532d99  usr/sbin/uos-removable-storage-device-manager
 25d798ffd69106f1e4e64f38a3881ac6  usr/share/dbus-1/system-services/com.deepin.daemon.SecurityEnhance.service
+f62963b458f8ef0222de18b2901ba83c  usr/share/dbus-1/system.d/com.deepin.daemon.RemovableStorageDevice.conf
 a983fca325201800ba51f774d2c09132  usr/share/dbus-1/system.d/com.deepin.daemon.SecurityEnhance.conf
 f64e2a7737cbd277f2dabed0e363cbd7  usr/share/doc/deepin-security-enhance/changelog.Debian.gz
 691edc3a43b1514a528e8332f5314d12  usr/share/doc/deepin-security-enhance/copyright
