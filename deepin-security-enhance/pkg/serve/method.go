@@ -116,6 +116,17 @@ func (s *SecurityEnhance) Status() (string, *dbus.Error) {
 	return state, dbusutil.ToError(err)
 }
 
+func (r *RemovableStorageDevice) IsServiceAvailable() (bool, *dbus.Error) {
+	var err error
+	var state bool
+
+	state = true
+
+	err = fmt.Errorf("GetDeviceList test \n ")
+
+	return state, dbusutil.ToError(err)
+}
+
 func (r *RemovableStorageDevice) GetDeviceList() (string, *dbus.Error) {
 	var err error
 	var dev_list string

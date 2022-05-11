@@ -7,13 +7,11 @@ import (
 	"pkg.deepin.io/lib/dbusutil"
 )
 
-
 // dbus后台服务执行程序
 var (
-	SecurityEnhanceDaemon = "deepin-security-enhance"
+	SecurityEnhanceDaemon        = "deepin-security-enhance"
 	RemovableStorageDeviceDaemon = "uos-usb-storage-daemon"
 )
-
 
 // dbus服务信息
 const (
@@ -34,30 +32,29 @@ type SecurityEnhance struct {
 		SetLabel        func() `in:"labeltype,devicetype,label"`
 		GetLabel        func() `in:"labeltype" out:"labels"`
 		GetSEUserByName func() `in:"linuxuser" out:"seuser,level"`
-
 	}
 
 	signals *struct {
 		Receipt struct {
 			result bool
 		}
-
 	}
 }
-
 
 // dbus服务对象
 type RemovableStorageDevice struct {
 	methods *struct {
 
 		// usb 存储接口
-		GetDeviceList     func() `out:"dev_list"` //??
-		SetGlobalPermMode func() `in:"mode" out:"result"`
-		GetGlobalPermMode func() `out:"mode"`
-		AddWhiteList      func() `in:"info"`
-		DeleteWhiteList   func() `in:"info"`
-		ModifyWhiteList   func() `in:"info"`
-		GetWhiteList      func() `out:"dev_list"` //??
+		IsServiceAvailable func() `out:"state"`
+		GetDeviceList      func() `out:"dev_list"` //??
+		SetGlobalPermMode  func() `in:"mode" out:"result"`
+		GetGlobalPermMode  func() `out:"mode"`
+		AddWhiteList       func() `in:"info"`
+		DeleteWhiteList    func() `in:"info"`
+		ModifyWhiteList    func() `in:"info"`
+		GetWhiteList       func() `out:"dev_list"` //??
+
 	}
 
 	signals *struct {
@@ -79,8 +76,6 @@ type RemovableStorageDevice struct {
 		}
 	}
 }
-
-
 
 // dbus 对象
 type Service struct {
@@ -113,9 +108,9 @@ func newService() (*Service, error) {
 		return nil, fmt.Errorf("new system service is error:%s\n", err)
 	}
 	securityenhance := &SecurityEnhance{}
-    removablestoragedevice := &RemovableStorageDevice{}
+	removablestoragedevice := &RemovableStorageDevice{}
 
-	dbusService = &Service{conn: srv, SecurityEnhance:securityenhance,RemovableStorageDevice:removablestoragedevice }
+	dbusService = &Service{conn: srv, SecurityEnhance: securityenhance, RemovableStorageDevice: removablestoragedevice}
 	return dbusService, nil
 }
 
@@ -130,7 +125,6 @@ func (srv *Service) Init(daemonName string) error {
 		return fmt.Errorf("Failed to init deamon")
 	}
 }
-
 
 // 初始化 等保管控的服务对象
 func (srv *Service) initSecurityEnhanceDbus() error {
@@ -150,7 +144,6 @@ func (srv *Service) initRemovableStorageDeviceDbus() error {
 	return srv.conn.RequestName(RemovableStorageDeviceName)
 }
 
-
 // 获取 dbus对象 ifc名称
 func (r *SecurityEnhance) GetInterfaceName() string {
 	return SecurityEnhanceIFC
@@ -159,10 +152,6 @@ func (r *SecurityEnhance) GetInterfaceName() string {
 func (r *RemovableStorageDevice) GetInterfaceName() string {
 	return RemovableStorageDeviceIFC
 }
-
-
-
-
 
 // 循环
 func (srv *Service) Loop() {
